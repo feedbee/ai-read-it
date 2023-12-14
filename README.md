@@ -38,6 +38,12 @@ aiReadIt.convertToSpeech(textToConvert)
     });
 ```
 
+## CLI
+
+```bash
+cat text-to-read.txt | ./bin/ai-read-it-cli.js > tts-audio.mp3
+```
+
 ## API
 
 `textToSpeech(text: string): Promise<Buffer>`

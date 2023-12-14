@@ -11,7 +11,7 @@ aiReadIt.init(process.env.OPENAI_API_KEY);
 async function convertTextToSpeech(text) {
     try {
         // Convert the text to speech
-        const audioBuffer = await aiReadIt.textToSpeech(text);
+        const audioBuffer = await aiReadIt.smallTextToSpeech(text);
 
         // Handle the audio buffer (e.g., play it or save it to a file)
         console.log("Successfully converted text to speech!");
