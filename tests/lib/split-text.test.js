@@ -1,6 +1,6 @@
 // test/lib/split-text.test.js
 
-const { splitTextIntoChunks } = require('../../lib/split-text.js');
+const { optimizeText, splitTextIntoChunks } = require('../../lib/split-text.js');
 
 describe('splitTextIntoChunks', () => {
     it('should split text into sentences', () => {
@@ -68,5 +68,34 @@ describe('splitTextIntoChunks', () => {
         const sentences = splitTextIntoChunks(text, chunkSize);
 
         expect(sentences).toEqual(expectedSentences);
+    });
+});
+
+describe('splitTextIntoChunks', () => {
+    it('should remove all extra spaces', () => {
+        const text = 'This   is a   text   with   multiple spaces.';
+        const expected = 'This is a text with multiple spaces.';
+
+        const result = optimizeText(text);
+
+        expect(result).toEqual(expected);
+    });
+
+    it('should trim extra spaces and new lines and tabs on the boundaries', () => {
+        const text = '  \n  Left-right \t';
+        const expected = 'Left-right';
+
+        const result = optimizeText(text);
+
+        expect(result).toEqual(expected);
+    });
+
+    it('should remove all extra spaces including new lines and tabs', () => {
+        const text = '\nThis  \n is a\t\t\ttext\n\nwith   multiple spaces.\r';
+        const expected = 'This is a text with multiple spaces.';
+
+        const result = optimizeText(text);
+
+        expect(result).toEqual(expected);
     });
 });
