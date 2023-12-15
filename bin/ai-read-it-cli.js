@@ -17,7 +17,7 @@ process.stdin.on('data', (chunk) => {
 process.stdin.on('end', async () => {
     try {
         // Convert text to speech
-        const audioBuffer = await aiReadIt.mediumTextToSpeechExtended(inputText);
+        const audioBuffer = await aiReadIt.mediumTextToSpeech(inputText);
 
         // Send audio to stdout
         process.stdout.write(audioBuffer);
