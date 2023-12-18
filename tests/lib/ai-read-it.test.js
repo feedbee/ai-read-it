@@ -105,7 +105,7 @@ describe('smallTextToSpeech', () => {
         init(apiKey);
 
         // Call the smallTextToSpeech function
-        const audioBuffer = await mediumTextToSpeech(text);console.log(audioBuffer.toString());
+        const audioBuffer = await mediumTextToSpeech(text);
 
         // Verify the OpenAI constructor and audio.speech.create method were called with the correct parameters
         expect(OpenAI).toHaveBeenCalledWith({ apiKey });
