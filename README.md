@@ -29,7 +29,7 @@ const textToConvert = "Hello, world! This is AI-Read-It in action.";
 
 aiReadIt.init(process.env.OPENAI_API_KEY);
 
-aiReadIt.convertToSpeech(textToConvert)
+aiReadIt.smallTextToSpeech(textToConvert)
     .then(audioBuffer => {
         // Handle the audio buffer (e.g., play it or save it to a file)
     })
@@ -40,16 +40,28 @@ aiReadIt.convertToSpeech(textToConvert)
 
 ## CLI
 
+A CLI (Command Line Interface) tool for text-to-speech conversion. It takes text as input, divides it into smaller parts if necessary, and outputs the converted audio. Each part is processed and sent individually to manage memory usage efficiently.
+
 ```bash
 cat text-to-read.txt | ./bin/ai-read-it-cli.js > tts-audio.mp3
 ```
 
 ## API
 
-`textToSpeech(text: string): Promise<Buffer>`
+`smallTextToSpeech(text: string, options = {}): Promise<Buffer>`
 
-- Converts the provided text into a speech audio buffer.
+- Converts small text to speech using the OpenAI text-to-speech API. Limited to 4096 chars as per OpenAI API.
 - Returns a Promise that resolves with the audio buffer.
+
+`mediumTextToSpeech(text: string, options = {}): Promise<Buffer>`
+
+- Converts medium-sized text into speech by splitting it into chunks and using smallTextToSpeech function. Still keeps all data in memory, including the output audio.
+- Returns a Promise that resolves with the audio buffer.
+
+`largeTextToSpeech(text: string, options = {}): Promise<Buffer>`
+
+- Converts a large text into speech by splitting it into smaller chunks and generating speech for each chunk. Returns audio chanks one by one not keeping them all in memory at once. Fits for any size of the texts: from small to large ones.
+- Returns a AsyncGenerator (AsyncIterator) that allows to iterated ower the chunks buffers one by one.
 
 ## Example
 
