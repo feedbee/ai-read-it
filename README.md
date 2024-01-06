@@ -58,10 +58,21 @@ cat text-to-read.txt | ./bin/ai-read-it-cli.js > tts-audio.mp3
 - Converts medium-sized text into speech by splitting it into chunks and using smallTextToSpeech function. Still keeps all data in memory, including the output audio.
 - Returns a Promise that resolves with the audio buffer.
 
-`largeTextToSpeech(text: string, options = {}): Promise<Buffer>`
+`largeTextToSpeech(text: string, options = {}): AsyncGenerator`
 
 - Converts a large text into speech by splitting it into smaller chunks and generating speech for each chunk. Returns audio chanks one by one not keeping them all in memory at once. Fits for any size of the texts: from small to large ones.
 - Returns a AsyncGenerator (AsyncIterator) that allows to iterated ower the chunks buffers one by one.
+
+
+For all the functions the options is an array of the following values:
+- `options.model` - The model to use for the conversion (default: 'tts-1'): `tts-1, tts-1-hd`
+- `options.voice` - The voice to use for the conversion (default: 'fable'): `alloy, echo, fable, onyx, nova, shimmer`
+- `options.response_format` - The format of the response audio (default: 'mp3'): `mp3, opus, aac, flac`
+- `options.speed` - The speed of the speech (default: `1.0`): `0.25 .. 4.0`
+
+`largeTextToSpeech()` additionally support `options.chunkSize` integer value from 1 till 4096 to set a maximum character limit
+for each text chunk processed (up to 4096 characters). Note that smaller chunks lead to quicker initial responses, but increase
+the number of requests sent per minute to the OpenAI API.
 
 ## Example
 
