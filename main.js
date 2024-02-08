@@ -1,11 +1,17 @@
-// main.js
-
 const readline = require('readline');
 const fs = require('fs');
 const aiReadIt = require('./lib/ai-read-it');
 
-// Initialize OpenAI API key from the environment
-aiReadIt.init(process.env.OPENAI_API_KEY);
+// Initialize the provider
+let providerName = 'OpenAI'; // default provider
+const providerArgIndex = process.argv.findIndex(arg => arg === '--provider' || arg === '-p');
+if (providerArgIndex !== -1 && process.argv.length > providerArgIndex + 1) {
+    providerName = process.argv[providerArgIndex + 1];
+}
+// Provider is initialized with the API Key from the environment:
+// - Open AI: process.env.OPENAI_API_KEY
+// - Google: process.env.GOOGLE_APPLICATION_CREDENTIALS_JSON
+aiReadIt.init(null, providerName);
 
 // Function to convert text to speech
 async function convertTextToSpeech(text) {

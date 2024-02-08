@@ -1,12 +1,18 @@
 #!/usr/bin/env node
 
-// ai-read-it-cli.js
-
 const aiReadIt = require('../lib/ai-read-it');
 const { Readable } = require('stream');
 
-// Initialize OpenAI API key from the environment
-aiReadIt.init(process.env.OPENAI_API_KEY);
+// Initialize the provider
+let providerName = 'OpenAI'; // default provider
+const providerArgIndex = process.argv.findIndex(arg => arg === '--provider' || arg === '-p');
+if (providerArgIndex !== -1 && process.argv.length > providerArgIndex + 1) {
+    providerName = process.argv[providerArgIndex + 1];
+}
+// Provider is initialized with the API Key from the environment:
+// - Open AI: process.env.OPENAI_API_KEY
+// - Google: process.env.GOOGLE_APPLICATION_CREDENTIALS_JSON
+aiReadIt.init(null, providerName);
 
 // Read input text from stdin
 let inputText = '';

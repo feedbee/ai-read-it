@@ -2,7 +2,7 @@
 
 ## Overview
 
-AI-Read-It is a Node.js module that utilizes the OpenAI text-to-speech model to convert text input into natural-sounding voice. This module is designed to be easily integrated into projects that require text-to-speech functionality.
+AI-Read-It is a Node.js module that utilizes text-to-speech models, including OpenAI's, to convert text input into natural-sounding voice. This module is designed for easy integration into projects requiring text-to-speech functionality and supports multiple providers.
 
 ## Installation
 
@@ -12,13 +12,13 @@ To use AI-Read-It in your project, follow these simple steps:
 
 2. Install the module using npm:
 
-   ```bash
-   npm install ai-read-it
-
+```bash
+npm install ai-read-it
+```
 
 ## Usage
 
-Import the module into your Node.js script. Configure it with your OpenAI API key.
+Import the module into your Node.js script. Configure it with your API key and optionally specify a provider (default is "OpenAI").
 
 Use the convertToSpeech function to convert text to speech:
     
@@ -27,7 +27,8 @@ const aiReadIt = require('ai-read-it');
 
 const textToConvert = "Hello, world! This is AI-Read-It in action.";
 
-aiReadIt.init(process.env.OPENAI_API_KEY);
+// Initialize with provider name (OpenAI is the default provider)
+aiReadIt.init(process.env.API_KEY, "OpenAI"); // or "Google" for Google Cloud Text-to-Speech
 
 aiReadIt.smallTextToSpeech(textToConvert)
     .then(audioBuffer => {
@@ -40,10 +41,10 @@ aiReadIt.smallTextToSpeech(textToConvert)
 
 ## CLI
 
-A CLI (Command Line Interface) tool for text-to-speech conversion. It takes text as input, divides it into smaller parts if necessary, and outputs the converted audio. Each part is processed and sent individually to manage memory usage efficiently.
+A CLI (Command Line Interface) tool for text-to-speech conversion is included. It takes text as input, processes it, and outputs the converted audio. Specify the provider with --provider or -p flag (default is "OpenAI").
 
 ```bash
-cat text-to-read.txt | ./bin/ai-read-it-cli.js > tts-audio.mp3
+cat text-to-read.txt | ./bin/ai-read-it-cli.js --provider OpenAI > tts-audio.mp3
 ```
 
 ## API
@@ -63,7 +64,6 @@ cat text-to-read.txt | ./bin/ai-read-it-cli.js > tts-audio.mp3
 - Converts a large text into speech by splitting it into smaller chunks and generating speech for each chunk. Returns audio chanks one by one not keeping them all in memory at once. Fits for any size of the texts: from small to large ones.
 - Returns a AsyncGenerator (AsyncIterator) that allows to iterated ower the chunks buffers one by one.
 
-
 For all the functions the options is an array of the following values:
 - `options.model` - The model to use for the conversion (default: 'tts-1'): `tts-1, tts-1-hd`
 - `options.voice` - The voice to use for the conversion (default: 'fable'): `alloy, echo, fable, onyx, nova, shimmer`
@@ -81,7 +81,7 @@ Check out the `main.js` file in the project repository for a simple example of u
 You can run the example:
 
 ```bash
-OPENAI_API_KEY="___PUT_YOUR_OPENAI_API_KEY_HERE___" node main.js
+OPENAI_API_KEY="___PUT_YOUR_OPENAI_API_KEY_HERE___" node main.js --provider OpenAI
 ```
 
 Alternatively, save your key into a `.env` file:
@@ -100,8 +100,29 @@ export OPENAI_API_KEY
 Run the application:
 
 ```bash
-node main.js
+node main.js --provider OpenAI
 ```
+
+## Supported Providers
+
+AI-Read-It currently supports two text-to-speech providers:
+
+### Google Text-to-Speech AI
+
+Google's Text-to-Speech service converts text into natural-sounding speech using advanced deep learning techniques. It offers a wide range of voices and languages to choose from, allowing for highly customizable speech synthesis.
+
+Configuration Options: Google Text-to-Speech supports various configuration options, including voice selection, speaking rate, and pitch adjustment.
+
+Voices: A diverse set of voices across languages and dialects, including WaveNet voices for natural-sounding speech.
+More Details: For a comprehensive overview of the supported configuration options and voices, please visit the [Google Cloud Text-to-Speech Documentation](https://cloud.google.com/text-to-speech/docs).
+
+### OpenAI
+
+OpenAI's text-to-speech capabilities are designed to generate human-like speech from text inputs. It provides options to customize the voice, speed, and other aspects of speech synthesis to fit various applications.
+
+Configuration Options: OpenAI allows customization of the voice model, speaking speed, and response format among others.
+Voices: OpenAI offers a selection of voices for different styles and use cases, ensuring versatility in speech generation.
+More Details: For detailed information on the configuration options and available voices, please refer to the [OpenAI API Documentation](https://platform.openai.com/docs/guides/text-to-speech).
 
 ## Issues and Contributions
 
