@@ -4,7 +4,12 @@
   "description": "Convert any provided text input into voice using OpenAI or Google text-to-speech models",
   "main": "lib/ai-read-it.js",
   "scripts": {
-    "test": "jest tests/**/*.js"
+    "test": "jest"
+  },
+  "jest": {
+    "testMatch": [
+      "**/tests/**/*.js"
+    ]
   },
   "repository": {
     "type": "git",
