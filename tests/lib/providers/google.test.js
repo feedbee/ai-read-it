@@ -12,12 +12,21 @@ jest.mock('@google-cloud/text-to-speech', () => {
 });
 
 describe('CreateGoogleProvider Function', () => {
-    test('creates GoogleProvider with apiKey', () => {
+    test('creates GoogleProvider with apiKey as a string', () => {
         const apiKey = JSON.stringify({ test: 'apiKey' });
         const provider = CreateGoogleProvider(apiKey);
         expect(provider).toBeInstanceOf(GoogleProvider);
         expect(TextToSpeechClient).toHaveBeenCalledWith({
             credentials: JSON.parse(apiKey),
+        });
+    });
+    
+    test('creates GoogleProvider with apiKey as an object', () => {
+        const apiKeyObject = { test: 'apiKey' };
+        const provider = CreateGoogleProvider(apiKeyObject);
+        expect(provider).toBeInstanceOf(GoogleProvider);
+        expect(TextToSpeechClient).toHaveBeenCalledWith({
+            credentials: apiKeyObject,
         });
     });
 
