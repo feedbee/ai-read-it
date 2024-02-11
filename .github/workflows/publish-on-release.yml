@@ -1,0 +1,39 @@
+name: Publish to npm on Release
+
+on:
+  release:
+    types: [created]
+
+jobs:
+  compare-and-publish:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Check out code
+      uses: actions/checkout@v2
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v2
+      with:
+        node-version: '14' # Adjust this to match your project's Node.js version
+        registry-url: 'https://registry.npmjs.org/'
+
+    - name: Install dependencies
+      run: npm install
+
+    - name: Get version from package.json
+      id: package_version
+      run: echo "PACKAGE_VERSION=$(node -p "require('./package.json').version")" >> $GITHUB_ENV
+
+    - name: Verify release version
+      run: |
+        if [ "v$PACKAGE_VERSION" != "${{ github.event.release.tag_name }}" ]; then
+          echo "Version in package.json ($PACKAGE_VERSION) does not match release tag (${{ github.event.release.tag_name }})"
+          exit 1
+        else
+          echo "Version matches. Proceeding to publish..."
+        fi
+
+    - name: Publish to npm
+      run: npm publish
+      env:
+        NODE_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
