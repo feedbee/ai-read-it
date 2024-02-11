@@ -22,7 +22,10 @@ jest.mock('../../lib/providers/openai.js', () => ({
 jest.mock('../../lib/providers/google.js', () => ({
     CreateGoogleProvider: jest.fn().mockImplementation(() => ({
         type: 'GoogleProvider',
-        textToSpeech: jest.fn((text) => Promise.resolve(Buffer.from(hashText(text))))
+        textToSpeech: jest.fn((text) => Promise.resolve(Buffer.from(hashText(text)))),
+        get maxInputLength() {
+            return DEFAULT_CHUNK_SIZE;
+        },
     })),
 }));
 jest.mock('../../lib/split-text.js', () => ({
@@ -54,10 +57,30 @@ describe('init function tests', () => {
     test('initializes OpenAI provider with apiKey (class)', () => {
         const apiKey = 'test-openai-api-key';
         const provider = createProvider('openai', apiKey);
+        const c = new AiReadIt(provider);
 
         expect(CreateOpenAIProvider).toHaveBeenCalledWith(apiKey);
         expect(CreateGoogleProvider).not.toHaveBeenCalled();
         expect(provider).toHaveProperty('type', 'OpenAIProvider');
+        expect(c.provider).toHaveProperty('type', 'OpenAIProvider'); // from mock
+    });
+
+    test('initializes OpenAI library with provider name w/o API key provided explicitely (class)', () => {
+        const c = new AiReadIt(createProvider('openai'));
+
+        expect(CreateOpenAIProvider).toHaveBeenCalledWith(undefined);
+        expect(CreateGoogleProvider).not.toHaveBeenCalled();
+        expect(c.provider).toHaveProperty('type', 'OpenAIProvider'); // from mock
+    });
+
+    test('initializes OpenAI library with provider name with API key provided explicitely (class)', () => {
+        const apiKey = 'test-openai-api-key';
+        const options = { apiKey };
+        const c = new AiReadIt(createProvider('openai', options));
+
+        expect(CreateOpenAIProvider).toHaveBeenCalledWith(options);
+        expect(CreateGoogleProvider).not.toHaveBeenCalled();
+        expect(c.provider).toHaveProperty('type', 'OpenAIProvider'); // from mock
     });
 
     test('initializes Google provider with apiKey when specified', () => {
@@ -69,12 +92,14 @@ describe('init function tests', () => {
     });
 
     test('initializes Google provider with apiKey (class)', () => {
-        const apiKey = 'test-openai-api-key';
+        const apiKey = 'test-google-api-key';
         const provider = createProvider('google', apiKey);
+        const c = new AiReadIt(provider);
 
         expect(CreateGoogleProvider).toHaveBeenCalledWith(apiKey);
         expect(CreateOpenAIProvider).not.toHaveBeenCalled();
         expect(provider).toHaveProperty('type', 'GoogleProvider');
+        expect(c.provider).toHaveProperty('type', 'GoogleProvider'); // from mock
     });
 
     test('defaults to OpenAI provider when providerName is not specified', () => {
@@ -178,7 +203,7 @@ let aiReadItInstance;
 describe('Text to Speech Tests (class)', () => {
     beforeAll(() => {
         // Initialize with an OpenAI provider for simplicity
-        aiReadItInstance = new AiReadIt('openai', 'fake-api-key');
+        aiReadItInstance = new AiReadIt(createProvider('openai', 'fake-api-key'));
     });
 
     describe('smallTextToSpeech', () => {

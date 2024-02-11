@@ -18,17 +18,23 @@ npm install ai-read-it
 
 ## Usage
 
-Import the module into your Node.js script. Configure it with your API key and optionally specify a provider (default is "OpenAI").
+The library provides two ways how to work with it, in other words – two interfaces: **functional** and **object-oriented**.
+To start, in both cases you need to onfigure the library with your API key and optionally specify a provider (default is `OpenAI`).
 
-Use the convertToSpeech function to convert text to speech:
-    
+**Functional interface** works as singleton. This approach works if you are connecting to a single provider using a single API key
+in your application. It fits most of the useceses, but a simple explample when it does not work is allowing clients of your
+accplication to provide their API keys and/or choosing providers.
+
+Functional interface is simpler to use. Just import the library initialize it and use on of the provided functions to convert
+your text to speech. `smallTextToSpeech` function is used in the following example:
+
 ```js
 const aiReadIt = require('ai-read-it');
 
 const textToConvert = "Hello, world! This is AI-Read-It in action.";
 
 // Initialize with provider name (OpenAI is the default provider)
-aiReadIt.init(process.env.API_KEY, "OpenAI"); // or "Google" for Google Cloud Text-to-Speech
+aiReadIt.init(process.env.API_KEY); // or pass "Google" as the second argument for Google Cloud Text-to-Speech
 
 aiReadIt.smallTextToSpeech(textToConvert)
     .then(audioBuffer => {
@@ -39,9 +45,46 @@ aiReadIt.smallTextToSpeech(textToConvert)
     });
 ```
 
+**Object-oriented interface** provides ability to create multiple instances of `AiReadIt` library in your appication.
+
+In the following example we create `Google` provider and use `mediumTextToSpeech` to handle a bigger text:
+
+```js
+const { AiReadIt, createProvider } = require('ai-read-it');
+
+const textToConvert = "Hello, world! This is AI-Read-It in action. ".repeat(150);
+
+// Initialize with provider name (OpenAI is the default provider)
+const aiReadIt = new AiReadIt(createProvider("Google", process.env.GOOGLE_APPLICATION_CREDENTIALS_JSON)); // or "OpenAI" for OpenAI Text-to-Speech
+
+aiReadIt.mediumTextToSpeech(textToConvert)
+    .then(audioBuffer => {
+        // Handle the audio buffer (e.g., play it or save it to a file)
+    })
+    .catch(error => {
+        console.error("Error:", error);
+    });
+```
+
+You can create provider with `createProvider` fabric. This approach works unless you need to provide costom configuration options
+to the provider (on top of the API key). In such case consider importing providers derectly as `ai-read-it/providers/***Provider`.
+
+:warning: **Note the different import syntax** in the examples above. In the functional case the whole library is refferenced
+with the `aiReadIt` variable while with object-oriented interface we import the `AiReadIt` class directly along with the 
+provider fabric function `createProvider`.
+
+```js
+// Functional interface
+const aiReadIt = require('ai-read-it');
+// Functional interfaceObject-oriented interface
+const { AiReadIt, createProvider } = require('ai-read-it');
+```
+
+Besides `smallTextToSpeech` and `mediumTextToSpeech` functions/methods, both interfaces provide `largeTextToSpeech` function to convert larger texts in the streaming mode in chunks to get the first faster and not wating till the whole text is processed. See the API details below.
+
 ## CLI
 
-A CLI (Command Line Interface) tool for text-to-speech conversion is included. It takes text as input, processes it, and outputs the converted audio. Specify the provider with --provider or -p flag (default is "OpenAI").
+A CLI (Command Line Interface) tool for text-to-speech conversion is included. It takes text as input, processes it, and outputs the converted audio. Specify the provider with `--provider` or `-p` flag (the profiver is `OpenAI`).
 
 ```bash
 cat text-to-read.txt | ./bin/ai-read-it-cli.js --provider OpenAI > tts-audio.mp3

@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-const aiReadIt = require('../lib/ai-read-it');
+const { AiReadIt, createProvider } = require('../lib/ai-read-it');
 const { Readable } = require('stream');
 
 // Initialize the provider
@@ -12,7 +12,7 @@ if (providerArgIndex !== -1 && process.argv.length > providerArgIndex + 1) {
 // Provider is initialized with the API Key from the environment:
 // - Open AI: process.env.OPENAI_API_KEY
 // - Google: process.env.GOOGLE_APPLICATION_CREDENTIALS_JSON
-aiReadIt.init(null, providerName);
+const aiReadIt = new AiReadIt(createProvider(providerName));
 
 // Read input text from stdin
 let inputText = '';

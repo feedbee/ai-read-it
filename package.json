@@ -1,6 +1,6 @@
 {
   "name": "ai-read-it",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "Convert any provided text input into voice using OpenAI or Google text-to-speech models",
   "main": "lib/ai-read-it.js",
   "scripts": {

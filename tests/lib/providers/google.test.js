@@ -46,7 +46,7 @@ describe('GoogleProvider Class', () => {
     let provider;
 
     beforeEach(() => {
-        provider = new GoogleProvider({ credentials: JSON.parse(process.env.GOOGLE_APPLICATION_CREDENTIALS_JSON) });
+        provider = new GoogleProvider({ credentials: {test: 'apiKey'} });
     });
 
     test('textToSpeech converts text successfully', async () => {

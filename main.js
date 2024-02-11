@@ -11,13 +11,13 @@ if (providerArgIndex !== -1 && process.argv.length > providerArgIndex + 1) {
 // Provider is initialized with the API Key from the environment:
 // - Open AI: process.env.OPENAI_API_KEY
 // - Google: process.env.GOOGLE_APPLICATION_CREDENTIALS_JSON
-aiReadIt.init(null, providerName);
+const aiReadItClient = new aiReadIt.AiReadIt(providerName);
 
 // Function to convert text to speech
 async function convertTextToSpeech(text) {
     try {
         // Convert the text to speech
-        const audioBuffer = await aiReadIt.smallTextToSpeech(text);
+        const audioBuffer = await aiReadItClient.smallTextToSpeech(text);
 
         // Handle the audio buffer (e.g., play it or save it to a file)
         console.log("Successfully converted text to speech!");
