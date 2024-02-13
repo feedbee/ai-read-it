@@ -1,7 +1,7 @@
 const { init, smallTextToSpeech, mediumTextToSpeech, largeTextToSpeech, maxInputLength, AiReadIt, createProvider } = require('../../lib/ai-read-it');
 const { CreateGoogleProvider } = require('../../lib/providers/google.js');
 const { CreateOpenAIProvider } = require('../../lib/providers/openai.js');
-const { splitTextIntoChunks } = require('../../lib/split-text.js');
+const { splitTextIntoChunks } = require('../../lib/helpers/split-text.js');
 const crypto = require('crypto');
 
 const DEFAULT_CHUNK_SIZE = 4096;
@@ -28,7 +28,7 @@ jest.mock('../../lib/providers/google.js', () => ({
         },
     })),
 }));
-jest.mock('../../lib/split-text.js', () => ({
+jest.mock('../../lib/helpers/split-text.js', () => ({
     optimizeText: jest.fn((text) => text),
     splitTextIntoChunks: jest.fn((text, chunkSize) => {
         chunkSize = chunkSize || DEFAULT_CHUNK_SIZE;

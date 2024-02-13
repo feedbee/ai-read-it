@@ -1,6 +1,4 @@
-// test/lib/split-text.test.js
-
-const { optimizeText, splitTextIntoChunks } = require('../../lib/split-text.js');
+const { optimizeText, splitTextIntoChunks } = require('../../../lib/helpers/split-text.js');
 
 describe('splitTextIntoChunks', () => {
     it('should split text into sentences', () => {
