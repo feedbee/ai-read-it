@@ -89,8 +89,8 @@ describe('splitTextIntoChunks', () => {
     });
 
     it('should remove all extra spaces including new lines and tabs', () => {
-        const text = '\nThis  \n is a\t\t\ttext\n\nwith   multiple spaces.\r';
-        const expected = 'This is a text with multiple spaces.';
+        const text = '\nThis is a multiline text \n It contains\t\t\ttabs\n\nAnd   multiple spaces.\r';
+        const expected = 'This is a multiline text. It contains tabs. And multiple spaces.';
 
         const result = optimizeText(text);
 

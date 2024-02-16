@@ -102,12 +102,12 @@ describe('GoogleProvider Language Detection constructor is called properly', () 
     });
 
     test('TranslationServiceClient constructor has been called when language detection is enabled', async () => {
-        new GoogleProvider({ credentials: { project_id: 'test-project' }, detectLanguage: true });
+        new GoogleProvider({ credentials: { project_id: 'test-project' }, detect_language: true });
         expect(TranslationServiceClient).toHaveBeenCalled();
     });
 
     test('TranslationServiceClient constructor has not been called when language detection is disabled', async () => {
-        new GoogleProvider({ credentials: { project_id: 'test-project' }, detectLanguage: false });
+        new GoogleProvider({ credentials: { project_id: 'test-project' }, detect_language: false });
         expect(TranslationServiceClient).not.toHaveBeenCalled();
     });
 
@@ -123,7 +123,7 @@ describe('GoogleProvider Language Detection when enabled', () => {
 
     beforeEach(() => {
         detectLanguageMock.mockClear();
-        provider = new GoogleProvider({ credentials: { project_id: 'test-project' }, detectLanguage: true });
+        provider = new GoogleProvider({ credentials: { project_id: 'test-project' }, detect_language: true });
     });
 
     test('textToSpeech detects language when not specified', async () => {
