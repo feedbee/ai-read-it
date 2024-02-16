@@ -1,7 +1,7 @@
 const { init, smallTextToSpeech, mediumTextToSpeech, largeTextToSpeech, maxInputLength, AiReadIt, createProvider } = require('../../lib/ai-read-it');
 const { CreateGoogleProvider } = require('../../lib/providers/google.js');
 const { CreateOpenAIProvider } = require('../../lib/providers/openai.js');
-const { splitTextIntoChunks } = require('../../lib/split-text.js');
+const { splitTextIntoChunks } = require('../../lib/helpers/split-text.js');
 const crypto = require('crypto');
 
 const DEFAULT_CHUNK_SIZE = 4096;
@@ -28,7 +28,7 @@ jest.mock('../../lib/providers/google.js', () => ({
         },
     })),
 }));
-jest.mock('../../lib/split-text.js', () => ({
+jest.mock('../../lib/helpers/split-text.js', () => ({
     optimizeText: jest.fn((text) => text),
     splitTextIntoChunks: jest.fn((text, chunkSize) => {
         chunkSize = chunkSize || DEFAULT_CHUNK_SIZE;
@@ -50,7 +50,23 @@ describe('init function tests', () => {
         const apiKey = 'test-openai-api-key';
         init(apiKey, 'openai');
 
-        expect(CreateOpenAIProvider).toHaveBeenCalledWith(apiKey);
+        expect(CreateOpenAIProvider).toHaveBeenCalledWith(apiKey, {});
+        expect(CreateGoogleProvider).not.toHaveBeenCalled();
+    });
+
+    test('initializes OpenAI provider with apiKey and option', () => {
+        const apiKey = 'test-openai-api-key';
+        init(apiKey, 'openai', { libOption: true });
+
+        expect(CreateOpenAIProvider).toHaveBeenCalledWith(apiKey, {});
+        expect(CreateGoogleProvider).not.toHaveBeenCalled();
+    });
+
+    test('initializes OpenAI provider with apiKey and provider option', () => {
+        const apiKey = 'test-openai-api-key';
+        init(apiKey, 'openai', { libOption: true, provider: { providerOption: true } });
+
+        expect(CreateOpenAIProvider).toHaveBeenCalledWith(apiKey, { providerOption: true });
         expect(CreateGoogleProvider).not.toHaveBeenCalled();
     });
 
@@ -59,7 +75,18 @@ describe('init function tests', () => {
         const provider = createProvider('openai', apiKey);
         const c = new AiReadIt(provider);
 
-        expect(CreateOpenAIProvider).toHaveBeenCalledWith(apiKey);
+        expect(CreateOpenAIProvider).toHaveBeenCalledWith(apiKey, {});
+        expect(CreateGoogleProvider).not.toHaveBeenCalled();
+        expect(provider).toHaveProperty('type', 'OpenAIProvider');
+        expect(c.provider).toHaveProperty('type', 'OpenAIProvider'); // from mock
+    });
+
+    test('initializes OpenAI provider with apiKey and provider option (class)', () => {
+        const apiKey = 'test-openai-api-key';
+        const provider = createProvider('openai', apiKey, { providerOption: true });
+        const c = new AiReadIt(provider);
+
+        expect(CreateOpenAIProvider).toHaveBeenCalledWith(apiKey, { providerOption: true });
         expect(CreateGoogleProvider).not.toHaveBeenCalled();
         expect(provider).toHaveProperty('type', 'OpenAIProvider');
         expect(c.provider).toHaveProperty('type', 'OpenAIProvider'); // from mock
@@ -68,17 +95,17 @@ describe('init function tests', () => {
     test('initializes OpenAI library with provider name w/o API key provided explicitely (class)', () => {
         const c = new AiReadIt(createProvider('openai'));
 
-        expect(CreateOpenAIProvider).toHaveBeenCalledWith(undefined);
+        expect(CreateOpenAIProvider).toHaveBeenCalledWith(undefined, {});
         expect(CreateGoogleProvider).not.toHaveBeenCalled();
         expect(c.provider).toHaveProperty('type', 'OpenAIProvider'); // from mock
     });
 
     test('initializes OpenAI library with provider name with API key provided explicitely (class)', () => {
         const apiKey = 'test-openai-api-key';
-        const options = { apiKey };
-        const c = new AiReadIt(createProvider('openai', options));
+        const key = { apiKey };
+        const c = new AiReadIt(createProvider('openai', key));
 
-        expect(CreateOpenAIProvider).toHaveBeenCalledWith(options);
+        expect(CreateOpenAIProvider).toHaveBeenCalledWith(key, {});
         expect(CreateGoogleProvider).not.toHaveBeenCalled();
         expect(c.provider).toHaveProperty('type', 'OpenAIProvider'); // from mock
     });
@@ -87,7 +114,7 @@ describe('init function tests', () => {
         const apiKey = 'test-google-api-key';
         init(apiKey, 'google');
 
-        expect(CreateGoogleProvider).toHaveBeenCalledWith(apiKey);
+        expect(CreateGoogleProvider).toHaveBeenCalledWith(apiKey, {});
         expect(CreateOpenAIProvider).not.toHaveBeenCalled();
     });
 
@@ -96,7 +123,7 @@ describe('init function tests', () => {
         const provider = createProvider('google', apiKey);
         const c = new AiReadIt(provider);
 
-        expect(CreateGoogleProvider).toHaveBeenCalledWith(apiKey);
+        expect(CreateGoogleProvider).toHaveBeenCalledWith(apiKey, {});
         expect(CreateOpenAIProvider).not.toHaveBeenCalled();
         expect(provider).toHaveProperty('type', 'GoogleProvider');
         expect(c.provider).toHaveProperty('type', 'GoogleProvider'); // from mock
@@ -106,7 +133,7 @@ describe('init function tests', () => {
         const apiKey = 'default-openai-api-key';
         init(apiKey);
 
-        expect(CreateOpenAIProvider).toHaveBeenCalledWith(apiKey);
+        expect(CreateOpenAIProvider).toHaveBeenCalledWith(apiKey, {});
         expect(CreateGoogleProvider).not.toHaveBeenCalled();
     });
 
@@ -114,7 +141,7 @@ describe('init function tests', () => {
         const apiKey = 'default-openai-api-key';
         const provider = createProvider(null, apiKey);
 
-        expect(CreateOpenAIProvider).toHaveBeenCalledWith(apiKey);
+        expect(CreateOpenAIProvider).toHaveBeenCalledWith(apiKey, {});
         expect(CreateGoogleProvider).not.toHaveBeenCalled();
         expect(provider).toHaveProperty('type', 'OpenAIProvider');
     });
