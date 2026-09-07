@@ -125,7 +125,7 @@ describe('init function tests', () => {
             init(apiKey, 'unknownProvider');
         };
 
-        expect(initUnknownProvider).toThrowError('Unknown TTS provider: unknownProvider');
+        expect(initUnknownProvider).toThrow('Unknown TTS provider: unknownProvider');
     });
 
     test('throws error for unknown provider (class)', () => {
@@ -134,7 +134,7 @@ describe('init function tests', () => {
             createProvider('unknownProvider', apiKey);
         };
 
-        expect(initUnknownProvider).toThrowError('Unknown TTS provider: unknownProvider');
+        expect(initUnknownProvider).toThrow('Unknown TTS provider: unknownProvider');
     });
 });
 

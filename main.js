@@ -1,4 +1,4 @@
-const readline = require('readline');
+const readline = require('node:readline');
 const fs = require('fs');
 const { AiReadIt, createProvider } = require('./lib/ai-read-it');
 

@@ -174,3 +174,9 @@ If you encounter any issues or have suggestions for improvements, please [open a
 ## License
 
 This project is licensed under the [MIT License](https://opensource.org/license/mit/).
+
+## Development
+
+Requires Node.js >=22.12; Node.js 24 LTS is recommended (`nvm use`).
+Run `npm ci`, then `npm test -- --runInBand`. Provider tests mock external APIs;
+live synthesis requires your own OpenAI or Google credentials.
